@@ -1,0 +1,92 @@
+CREATE OR REPLACE TRIGGER display_salary_changes  
+BEFORE DELETE OR INSERT OR UPDATE ON customers  
+FOR EACH ROW  
+WHEN (NEW.ID > 0)  
+DECLARE  
+   sal_diff number;  
+BEGIN  
+   sal_diff := :NEW.salary  - :OLD.salary;  
+   dbms_output.put_line('Old salary: ' || :OLD.salary);  
+   dbms_output.put_line('New salary: ' || :NEW.salary);  
+   dbms_output.put_line('Salary difference: ' || sal_diff);  
+END;  
+/  
+
+Trigger created.
+0.001 seconds
+
+mysql> create table Emp(
+    -> ID int,
+    -> Name varchar(20),
+    -> Age int,
+    -> Address varchar(20),
+    -> Salary int
+    -> );
+Query OK, 0 rows affected (1.30 sec)
+
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('1','ID','Name','Age','Address','Salary');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('1','Ram','23','Allahabad','20000');
+Query OK, 1 row affected (0.18 sec)
+
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('2','Raju','24','Ameerpet','22000');
+Query OK, 1 row affected (0.26 sec)
+
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('3','Raj','25','Khamam','25000');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('4','Ray','21','Khasmir','26000');
+Query OK, 1 row affected (0.23 sec)
+
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('5','Rajsehar','19','Kasi','23000');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into Emp(ID,Name,Age,Address,Salary)values('6','Rajesh','23','Kandlur','28000');
+Query OK, 1 row affected (0.21 sec)
+
+mysql> select*from Emp;
++------+--------+------+-----------+--------+
+| ID   | Name   | Age  | Address   | Salary |
++------+--------+------+-----------+--------+
+|    1 | Ram    |   23 | Allahabad |  20000 |
+|    2 | Raju   |   24 | Ameerpet  |  22000 |
+|    3 | Raj    |   25 | Khamam    |  25000 |
+|    4 | Ray    |   21 | Khasmir   |  26000 |
+|    5 |Rajsekhar|   19 | Kasi      |  23000 |
+|    6 | Rajesh |   23 | Kandlur   |  28000 |
++------+--------+------+-----------+--------+
+6 rows in set (0.00 sec)
+
+DECLARE   
+   total_rows number(2);  
+BEGIN  
+   UPDATE  customers  
+   SET salary = salary + 5000;  
+   IF sql%notfound THEN  
+      dbms_output.put_line('no customers updated');  
+   ELSIF sql%found THEN  
+      total_rows := sql%rowcount;  
+      dbms_output.put_line( total_rows || ' customers updated ');  
+   END IF;   
+END;  
+/
+
+Old salary: 20000
+New salary: 25000
+Salary difference: 5000
+Old salary: 22000
+New salary: 27000
+Salary difference: 5000
+Old salary: 24000
+New salary: 29000
+Salary difference: 5000
+Old salary: 26000
+New salary: 31000
+Salary difference: 5000
+Old salary: 28000
+New salary: 33000
+Salary difference: 5000
+Old salary: 30000
+New salary: 35000
+Salary difference: 5000
+6 customers updated   
